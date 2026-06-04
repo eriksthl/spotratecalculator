@@ -459,7 +459,7 @@
   <main>
     <section class="card">
       <label for="input">Pristext</label>
-      <textarea id="input" placeholder="Klistra in hela sidan eller rate-urklipp från MSC, Hapag-Lloyd eller Maersk..."></textarea>
+      <textarea id="input" placeholder="Klistra in från MSC, Hapag-Lloyd eller Maersk..."></textarea>
       <div id="rateLabel" class="rate-label" role="button" tabindex="0" title="Klicka för att visa den inklistrade texten"></div>
       <div class="controls">
         <div class="field">
@@ -1103,10 +1103,12 @@
       return;
     }
     if (result.supportsAllTypes) {
-      containerTypeEl.disabled = false;
-      containerTypeEl.value = 'ALL';
-      return;
-    }
+  containerTypeEl.disabled = false;
+  if (!['20STD', '40STD', '40HC', 'ALL'].includes(containerTypeEl.value)) {
+    containerTypeEl.value = 'ALL';
+  }
+  return;
+}
     if (result.fixedContainerType) {
       containerTypeEl.value = result.fixedContainerType;
       containerTypeEl.disabled = true;
