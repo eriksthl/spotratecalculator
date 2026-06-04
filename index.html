@@ -665,7 +665,7 @@
     if (/^Ocean Freight$/i.test(c)) return 'Freight Charge';
     if (/Document Charge/i.test(c) && !/Destination Documentation/i.test(c)) return 'Export Surcharge';
     if (/Origin/i.test(c) && /Emergency Ops|THC|Terminal|Handling|Additional/i.test(c)) return 'Export Surcharge';
-    if (collectFlag || /Destination|Dest\.?|Cargo Release|Equipment Transfer|Receiving,?\s*Handling,?\s*Delivery|Equipment Maintenance/i.test(c)) return 'Import Surcharge';
+    if (collectFlag || /Destination|Dest\.?|Cargo Release|Equipment Transfer|Receiving,?\s*Handling,?\s*Delivery|Equipment Maintenance|Electronic Payment Processing|Preparing Delivery Order/i.test(c)) return 'Import Surcharge';
     return 'Freight Surcharge';
   }
 
@@ -701,6 +701,7 @@
     const stopOrNoise = /^(Freight Charges|Surcharges|Show Prices In|Local Currency|Unless otherwise|The Ocean Freight includes|Carrier Security Fee|Emergency Surcharge|Operations Cost Recovery|Terminal Handling Charge Orig\.?|Suez Canal Transit Charge\.?)/i;
     let pendingComment = '';
     let collectFlag = false;
+    let forceImportAfterDocumentCharge = false;
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
@@ -713,6 +714,8 @@
 
       const originalCharge = line;
       const charge = normalizeFormat2ChargeName(originalCharge);
+      const isDocumentCharge = /^Document Charge$/i.test(charge);
+      const forceImportForThisRow = forceImportAfterDocumentCharge && !isDocumentCharge;
       let j = i + 1;
       let comment = pendingComment;
       pendingComment = '';
@@ -744,7 +747,7 @@
 
       rows.push({
         format: 'Hapag-Lloyd',
-        category: classifyFormat2Charge(charge, collectFlag),
+        category: forceImportForThisRow ? 'Import Surcharge' : classifyFormat2Charge(charge, collectFlag),
         charge,
         level: unit,
         unit,
@@ -756,6 +759,9 @@
         payment: collectFlag ? 'Collect' : '',
         comment
       });
+      if (isDocumentCharge) {
+        forceImportAfterDocumentCharge = true;
+      }
       collectFlag = false;
       i = j + 2;
     }
