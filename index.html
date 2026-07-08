@@ -46,7 +46,7 @@
       margin: 0 0 4px;
       font-size: 22px;
       line-height: 1.1;
-      font-weight: 800;
+      font-weight: 700;
       color: #fff;
       letter-spacing: -0.02em;
     }
@@ -55,7 +55,7 @@
       margin: 0 0 12px;
       font-size: 15px;
       color: #fff;
-      font-weight: 800;
+      font-weight: 700;
     }
 
     h3 {
@@ -154,7 +154,7 @@
       border: 1px solid var(--accent);
       background: var(--accent);
       color: #061026;
-      font-weight: 800;
+      font-weight: 700;
       transition: filter 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
     }
 
@@ -218,7 +218,58 @@
       background: var(--accent);
       color: #fff;
       box-shadow: 0 2px 10px rgba(106,166,255,0.25);
-      font-weight: 800;
+      font-weight: 700;
+    }
+
+    .include-field {
+      grid-column: 1 / -1;
+    }
+
+    .include-panel {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--input);
+    }
+
+    .include-toggle {
+      position: relative;
+      display: block;
+      margin: 0;
+    }
+
+    .include-toggle input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .include-toggle span {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--sub);
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid transparent;
+      transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .include-toggle input:checked + span {
+      background: var(--accent);
+      color: #fff;
+      border-color: rgba(255,255,255,0.18);
+      box-shadow: 0 2px 10px rgba(106,166,255,0.25);
+    }
+
+    .include-toggle input:focus-visible + span {
+      box-shadow: 0 0 0 3px rgba(106,166,255,0.18), 0 2px 10px rgba(106,166,255,0.25);
     }
 
     .grid {
@@ -281,7 +332,7 @@
 
     .status {
       margin-top: 10px;
-      font-weight: 800;
+      font-weight: 700;
       font-size: 13px;
     }
 
@@ -341,7 +392,7 @@
       background: rgba(106,166,255,0.14);
       color: var(--accent);
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 700;
       white-space: nowrap;
       border: 1px solid rgba(106,166,255,0.24);
     }
@@ -356,6 +407,17 @@
       background: rgba(255,107,107,0.12);
       color: var(--danger);
       border-color: rgba(255,107,107,0.28);
+    }
+
+    .status-pill {
+      appearance: none;
+      line-height: 1.45;
+      cursor: pointer;
+    }
+
+    .status-pill.manual {
+      border-style: dashed;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
     }
 
     .footer-actions {
@@ -392,7 +454,7 @@
       cursor: pointer;
       color: var(--sub);
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       user-select: none;
@@ -422,7 +484,7 @@
       background: rgba(106,166,255,0.12);
       color: #fff;
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: 0.2px;
       cursor: pointer;
       user-select: none;
@@ -446,6 +508,7 @@
       header { padding: 18px 14px 6px; }
       main { padding: 10px 14px 28px; }
       .controls { grid-template-columns: 1fr; }
+      .include-panel { grid-template-columns: 1fr; }
       .rate-grid { grid-template-columns: 1fr 1fr; }
       h1 { font-size: 20px; }
     }
@@ -459,14 +522,15 @@
   <main>
     <section class="card">
       <label for="input">Pristext</label>
-      <textarea id="input" placeholder="Klistra in från MSC, Hapag-Lloyd eller Maersk..."></textarea>
+      <textarea id="input" placeholder="Klistra in från MSC, Hapag-Lloyd, Maersk eller OOCL..."></textarea>
       <div id="rateLabel" class="rate-label" role="button" tabindex="0" title="Klicka för att visa den inklistrade texten"></div>
       <div class="controls">
-        <div class="field">
-          <label>Läge</label>
-          <div class="mode-switch" role="radiogroup" aria-label="Läge">
-            <label><input type="radio" name="mode" value="GIAI" checked><span>GIAI</span></label>
-            <label><input type="radio" name="mode" value="GIGO"><span>GIGO</span></label>
+        <div class="field include-field">
+          <label>Inkludera i huvudsumma</label>
+          <div class="include-panel" role="group" aria-label="Inkludera kostnadsgrupper">
+            <label class="include-toggle"><input id="includeFreight" type="checkbox" checked><span>Freight</span></label>
+            <label class="include-toggle"><input id="includeOrigin" type="checkbox" checked><span>Origin</span></label>
+            <label class="include-toggle"><input id="includeDestination" type="checkbox"><span>Destination</span></label>
           </div>
         </div>
         <div class="field">
@@ -530,6 +594,9 @@
   const containerTypeEl = document.getElementById('containerType');
   const equipmentQtyEl = document.getElementById('equipmentQty');
   const blQtyEl = document.getElementById('blQty');
+  const includeFreightEl = document.getElementById('includeFreight');
+  const includeOriginEl = document.getElementById('includeOrigin');
+  const includeDestinationEl = document.getElementById('includeDestination');
   const rateGridEl = document.getElementById('rateGrid');
   const rateMetaEl = document.getElementById('rateMeta');
   const rateLabelEl = document.getElementById('rateLabel');
@@ -537,6 +604,8 @@
 
   let currentRows = [];
   let lastFormat = '';
+  let manualBucketOverrides = {};
+  let lastInputForOverrides = '';
   const supportedPayments = 'Prepaid, Collect, Elsewhere';
   const isoCurrencies = ['SEK','USD','EUR','GBP','AED','NOK','DKK','CHF','CNY','JPY','HKD','SGD','AUD','NZD','CAD','MXN','BRL','INR','IDR','THB','MYR','KRW','TWD','ZAR','TRY','PLN','CZK','HUF','RON','BGN','HRK','RSD','SAR','QAR','KWD','BHD','OMR','ILS','EGP','MAD','NGN','KES','PKR','BDT','VND','PHP','CLP','COP','PEN','ARS'];
   const currencies = new Set(isoCurrencies);
@@ -664,7 +733,7 @@
     const c = String(charge || '');
     if (/^Ocean Freight$/i.test(c)) return 'Freight Charge';
     if (/Document Charge/i.test(c) && !/Destination Documentation/i.test(c)) return 'Export Surcharge';
-    if (/Origin/i.test(c) && /Emergency Ops|THC|Terminal|Handling|Additional/i.test(c)) return 'Export Surcharge';
+    if (/(Origin|Orig\.?)/i.test(c) && /Emergency Ops|THC|Terminal|Handling|Additional/i.test(c)) return 'Export Surcharge';
     if (collectFlag || /Destination|Dest\.?|Cargo Release|Equipment Transfer|Receiving,?\s*Handling,?\s*Delivery|Equipment Maintenance|Electronic Payment Processing|Preparing Delivery Order/i.test(c)) return 'Import Surcharge';
     return 'Freight Surcharge';
   }
@@ -674,7 +743,7 @@
     c = c.replace(/\s*\(all in one document\)\s*/i, '').trim();
     const heavy = c.match(/^Between\s+([\d.,]+)\s+and\s+([\d.,]+)\s+ton\s+container\s+gross\s+weight\s*\(?VGM\)?/i);
     if (heavy) return `Heavy Lift Charge (VGM ${heavy[1].replace('.', ',')}–${heavy[2].replace('.', ',')} ton)`;
-    c = c.replace(/Dest\.?$/i, 'Destination');
+    c = c.replace(/\bDest\.?$/i, 'Destination');
     return c;
   }
 
@@ -705,27 +774,43 @@
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
+      const looksLikeStructuredCharge = lineIsUnit(lines[i + 1] || '') && lineIsCurrency(lines[i + 2] || '') && parsePriceTriple(lines[i + 3] || '');
       if (/^Freight Charges$/i.test(line) || /^Surcharges$/i.test(line)) continue;
       if (/^The Ocean Freight includes/i.test(line)) continue;
       if (/^Show Prices In$|^Local Currency$|^Unless otherwise/i.test(line)) continue;
       if (/^Applicable if shipping instructions/i.test(line)) { pendingComment = 'Gäller om shipping instructions mottagits via eChannel'; continue; }
       if (/^To be paid collect$/i.test(line)) { collectFlag = true; continue; }
-      if (stopOrNoise.test(line) || lineIsUnit(line) || lineIsCurrency(line) || lineIsPrice(line)) continue;
+      if (/^To be paid prepaid$/i.test(line)) continue;
+      if ((stopOrNoise.test(line) && !looksLikeStructuredCharge) || lineIsUnit(line) || lineIsCurrency(line) || lineIsPrice(line)) continue;
 
-      const originalCharge = line;
+      let originalCharge = line;
+      const embeddedPrepaid = /\(\s*To be paid prepaid\s*\)/i.test(originalCharge);
+      if (embeddedPrepaid) originalCharge = originalCharge.replace(/\s*\(\s*To be paid prepaid\s*\)\s*/i, ' ').trim();
       const charge = normalizeFormat2ChargeName(originalCharge);
       const isDocumentCharge = /^Document Charge$/i.test(charge);
       const forceImportForThisRow = forceImportAfterDocumentCharge && !isDocumentCharge;
       let j = i + 1;
       let comment = pendingComment;
       pendingComment = '';
-      if (/^Applicable if shipping instructions/i.test(lines[j] || '')) {
-        comment = 'Gäller om shipping instructions mottagits via eChannel';
-        j++;
-      }
-      if (/^To be paid collect$/i.test(lines[j] || '')) {
-        collectFlag = true;
-        j++;
+      if (embeddedPrepaid) comment = comment ? comment + ', betalas prepaid' : 'Betalas prepaid';
+      let scanningChargeMeta = true;
+      while (scanningChargeMeta) {
+        if (/^Applicable if shipping instructions/i.test(lines[j] || '')) {
+          comment = comment ? comment + ', gäller om shipping instructions mottagits via eChannel' : 'Gäller om shipping instructions mottagits via eChannel';
+          j++;
+          continue;
+        }
+        if (/^To be paid collect$/i.test(lines[j] || '')) {
+          collectFlag = true;
+          j++;
+          continue;
+        }
+        if (/^To be paid prepaid$/i.test(lines[j] || '')) {
+          comment = comment ? comment + ', betalas prepaid' : 'Betalas prepaid';
+          j++;
+          continue;
+        }
+        scanningChargeMeta = false;
       }
       const unit = lines[j] || '';
       const currency = (lines[j + 1] || '').toUpperCase();
@@ -768,6 +853,110 @@
     return rows;
   }
 
+
+
+  function parseOOCLNumber(value) {
+    let s = String(value || '').trim().replace(/\s/g, '');
+    if (!s) return null;
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) {
+      s = s.replace(/,/g, '');
+    } else if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)) {
+      s = s.replace(/\./g, '').replace(',', '.');
+    } else {
+      s = s.replace(',', '.');
+    }
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function stripOOCLTrailingClass(tailCells) {
+    const cells = tailCells.map(c => String(c || '').trim()).filter(Boolean);
+    let suppliedClass = '';
+    if (cells.length && /^(Origin|Destination|Additional(?:\s+doc\s+fee)?|Freight)$/i.test(cells[cells.length - 1])) {
+      suppliedClass = cells.pop();
+    }
+    return {
+      remarks: cells.join(' ').replace(/\s+/g, ' ').trim(),
+      suppliedClass
+    };
+  }
+
+  function classifyFormat4Charge(charge, remarks, section) {
+    const c = String(charge || '');
+    const r = String(remarks || '').trim();
+    if (section === 'freight') return 'Freight Charge';
+    if (/^Outbound\s+Documentation\s+Fee$/i.test(c)) return 'Additional';
+    if (/Advance\s+Manifest\s+Security\s+Charge/i.test(c)) return 'Export Surcharge';
+    if (/Origins?/i.test(r) || !r || /^Tariff\.?$/i.test(r) || /^Tariff;?\s*$/i.test(r)) return 'Export Surcharge';
+    if (/Destinations?|Last\s+Discharge/i.test(r)) return 'Import Surcharge';
+    return 'Export Surcharge';
+  }
+
+  function parseFormat4(lines) {
+    const rows = [];
+    let section = '';
+
+    lines.forEach(line => {
+      if (/^Ocean\s+Freight\s*:/i.test(line)) { section = 'freight'; return; }
+      if (/^Ocean\s+Surcharges\s*:/i.test(line)) { section = 'surcharges'; return; }
+      if (/\bCode\b/i.test(line) && /\bCurrency\b/i.test(line) && /\bPer\s*20ft\b/i.test(line)) return;
+      if (!/\b[A-Z]{3}\b/.test(line) || !/\d/.test(line)) return;
+
+      const cells = String(line || '')
+        .split('\t')
+        .map(s => s.replace(/\u00a0/g, ' ').trim())
+        .filter(Boolean);
+      if (cells.length < 5) return;
+
+      let curIdx = -1;
+      for (let idx = 0; idx <= cells.length - 4; idx++) {
+        const maybeCurrency = String(cells[idx] || '').trim().toUpperCase();
+        if (!currencies.has(maybeCurrency)) continue;
+        if (parseOOCLNumber(cells[idx + 1]) !== null && parseOOCLNumber(cells[idx + 2]) !== null && parseOOCLNumber(cells[idx + 3]) !== null) {
+          curIdx = idx;
+          break;
+        }
+      }
+      if (curIdx < 1) return;
+
+      const currency = cells[curIdx].toUpperCase();
+      const amount20 = parseOOCLNumber(cells[curIdx + 1]);
+      const amount40 = parseOOCLNumber(cells[curIdx + 2]);
+      const amount40hc = parseOOCLNumber(cells[curIdx + 3]);
+
+      let code = '';
+      let chargeCells;
+      if (curIdx >= 2 && /^[A-Z0-9]{2,6}$/i.test(cells[curIdx - 1]) && !/[.,:;]/.test(cells[curIdx - 1])) {
+        code = cells[curIdx - 1].toUpperCase();
+        chargeCells = cells.slice(0, curIdx - 1);
+      } else {
+        chargeCells = cells.slice(0, curIdx);
+      }
+      const charge = normalizeChargeName(chargeCells.join(' '));
+      if (!charge) return;
+
+      const tail = stripOOCLTrailingClass(cells.slice(curIdx + 4));
+      const category = classifyFormat4Charge(charge, tail.remarks, section);
+      const isBl = /Per\s*B\/L/i.test(tail.remarks);
+      const comment = [code, tail.remarks].filter(Boolean).join(' | ');
+
+      rows.push({
+        format: 'OOCL',
+        category,
+        charge,
+        level: isBl ? 'Per Bill of Lading' : 'Per Container',
+        unit: isBl ? 'BL' : 'Ctr.',
+        currency,
+        amount20,
+        amount40,
+        amount40hc,
+        amount: amount40hc,
+        payment: '',
+        comment
+      });
+    });
+    return rows;
+  }
 
   function parsePlainNumber(line) {
     const m = String(line || '').trim().match(/^-?\d+(?:[.,]\d+)?$/);
@@ -861,15 +1050,63 @@
 
   function detectAndParse(text) {
     const lines = cleanLines(text);
-    const looksMaersk = lines.some(l => /^Freight charges\b/i.test(l)) && lines.some(l => /^Origin charges\b/i.test(l)) && lines.some(l => /^Destination charges\b/i.test(l));
-    const looksF2 = !looksMaersk && lines.some(l => /^Ocean Freight/i.test(l)) && lines.some(l => /	/.test(l) || /ctr\. type irrelevant/i.test(l) || /^Show Total Price Estimate Details$/i.test(l));
+    const looksOOCL = lines.some(l => /^Ocean Freight\s*:/i.test(l))
+      && (lines.some(l => /\bPer\s*20ft\b/i.test(l)) || lines.some(l => /^Ocean Surcharges\s*:/i.test(l)));
+    const looksMaersk = !looksOOCL && lines.some(l => /^Freight charges\b/i.test(l)) && lines.some(l => /^Origin charges\b/i.test(l)) && lines.some(l => /^Destination charges\b/i.test(l));
+    const looksF2 = !looksOOCL && !looksMaersk && lines.some(l => /^Ocean Freight/i.test(l)) && lines.some(l => /\t/.test(l) || /ctr\. type irrelevant/i.test(l) || /^Show Total Price Estimate Details$/i.test(l));
+    if (looksOOCL) return { format: 'OOCL', rows: parseFormat4(lines), fixedContainerType: '', supportsAllTypes: true };
     if (looksMaersk) return { format: 'Maersk', rows: parseFormat3(lines), fixedContainerType: detectMaerskContainerType(lines), supportsAllTypes: false };
     if (looksF2) return { format: 'Hapag-Lloyd', rows: parseFormat2(lines), fixedContainerType: '', supportsAllTypes: true };
     return { format: 'MSC', rows: parseFormat1(lines), fixedContainerType: detectMscContainerType(lines), supportsAllTypes: false };
   }
 
-  function getMode() {
-    return document.querySelector('input[name="mode"]:checked')?.value || 'GIAI';
+  function makeRowKey(row, index) {
+    return [
+      row.format || '', row.category || '', row.charge || '', row.level || '', row.currency || '',
+      row.amount20 ?? '', row.amount40 ?? '', row.amount40hc ?? '', index
+    ].join('|');
+  }
+
+  function assignRowKeys(rows) {
+    rows.forEach((row, index) => {
+      row._key = makeRowKey(row, index);
+    });
+  }
+
+  function includeSettings() {
+    return {
+      freight: includeFreightEl ? includeFreightEl.checked : true,
+      origin: includeOriginEl ? includeOriginEl.checked : true,
+      destination: includeDestinationEl ? includeDestinationEl.checked : false
+    };
+  }
+
+  function isGroupSelected(group) {
+    const settings = includeSettings();
+    return Boolean(settings[group]);
+  }
+
+  function groupDisplayName(group) {
+    return ({ freight: 'Freight', origin: 'Origin', destination: 'Destination' })[group] || String(group || '');
+  }
+
+  function selectedGroupsLabel() {
+    const selected = ['freight', 'origin', 'destination']
+      .filter(isGroupSelected)
+      .map(groupDisplayName);
+    return selected.length ? selected.join(' + ') : 'Inga grupper valda';
+  }
+
+  function rowCostGroup(row) {
+    const category = String(row.category || '');
+    const charge = String(row.charge || '');
+    if (/^Additional$/i.test(category)) return 'additional';
+    if (/\bDestination\b|\bDest\.?\b|Last\s+Discharge/i.test(charge)) return 'destination';
+    if (/\bOrigin\b|\bOrig\.?\b/i.test(charge)) return 'origin';
+    if (/Import\s*Surcharges?|^Destination charges$/i.test(category)) return 'destination';
+    if (/Export\s*Surcharges?|^Origin charges$/i.test(category)) return 'origin';
+    if (/Freight\s*Charges?|Freight\s*Surcharges?|^Freight charges$/i.test(category)) return 'freight';
+    return 'freight';
   }
 
   function getQty(row) {
@@ -888,15 +1125,31 @@
 
   function money(n) { return Number(n || 0).toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 
-  function rowRule(row) {
+  function automaticRowRule(row) {
     const charge = String(row.charge || '');
     const category = String(row.category || '');
     if (/heavy\s*lift\s*charge|gross\s*weight\s*\(?VGM\)?|Between\s+[\d.,]+\s+and\s+[\d.,]+\s+ton/i.test(charge)) return { bucket: 'excluded', reason: 'Heavy Lift Charge exkluderas alltid' };
     if (/\(DOC\)/i.test(charge) || /^documentation\s*fee\s*\(DOC\)$/i.test(charge)) return { bucket: 'additional', reason: 'Documentation fee/DOC visas som Additional' };
     if (/^documentation\s*fee\s*origin$/i.test(charge)) return { bucket: 'additional', reason: 'Documentation Fee Origin visas som Additional' };
     if (/^document\s*charge$/i.test(charge) || /\bDocument\s*Charge\b/i.test(charge)) return { bucket: 'additional', reason: 'Document Charge visas som Additional' };
-    if (getMode() === 'GIAI' && (/Import\s*Surcharge/i.test(category) || /^Destination charges$/i.test(category))) return { bucket: 'excluded', reason: 'Import/Destination exkluderad i GIAI' };
+    if (/^outbound\s+documentation\s+fee$/i.test(charge)) return { bucket: 'additional', reason: 'Outbound Documentation Fee visas som Additional' };
+    if (/^Additional$/i.test(category)) return { bucket: 'additional', reason: 'Additional visas separat' };
+    const group = rowCostGroup(row);
+    if (group === 'additional') return { bucket: 'additional', reason: 'Additional visas separat' };
+    if (!isGroupSelected(group)) return { bucket: 'excluded', reason: `${groupDisplayName(group)} exkluderad via panel` };
     return { bucket: 'included', reason: '' };
+  }
+
+  function rowRule(row) {
+    const manualBucket = row._key ? manualBucketOverrides[row._key] : '';
+    if (manualBucket === 'included' || manualBucket === 'excluded') {
+      return {
+        bucket: manualBucket,
+        reason: manualBucket === 'included' ? 'Manuellt inkluderad' : 'Manuellt exkluderad',
+        manual: true
+      };
+    }
+    return automaticRowRule(row);
   }
 
   function getRatesToSek() {
@@ -984,6 +1237,7 @@
       const rule = rowRule(r);
       r._bucket = rule.bucket;
       r._reason = rule.reason;
+      r._manual = Boolean(rule.manual);
       buckets[rule.bucket].push(r);
     });
 
@@ -1036,10 +1290,10 @@
         const m = calc.mainAll[t];
         html += `<strong>${t}: ${money(m.totalInTarget)} ${escapeHtml(m.target)}</strong>`;
       });
-      html += `<p class="note">${getMode()}</p></div>`;
+      html += `<p class="note">${selectedGroupsLabel()}</p></div>`;
     } else {
       const m = calc.main;
-      html += `<div class="totalbox main"><small>Huvudsumma ${type}</small><strong>${money(m.totalInTarget)} ${escapeHtml(m.target)}</strong><p class="note">${getMode()}</p></div>`;
+      html += `<div class="totalbox main"><small>Huvudsumma ${type}</small><strong>${money(m.totalInTarget)} ${escapeHtml(m.target)}</strong><p class="note">${selectedGroupsLabel()}</p></div>`;
       html += renderCurrencyTotals('Originalvaluta', m.byCurrency, '', '');
     }
     html += renderCurrencyTotals('Additional', calc.additionalTotals, 'additional', '');
@@ -1065,8 +1319,10 @@
       const reason = r._reason || rowRule(r).reason;
       const rowClass = bucket === 'included' ? '' : bucket + '-row';
       const status = bucket === 'included' ? 'Ingår' : bucket === 'additional' ? 'Additional' : 'Exkluderad';
+      const manualClass = r._manual ? ' manual' : '';
+      const statusTitle = r._manual ? 'Manuellt ändrad. Klicka för att växla Ingår/Exkluderad.' : 'Klicka för att växla Ingår/Exkluderad.';
       html += `<tr class="${rowClass}">` +
-        `<td><span class="pill ${bucket === 'included' ? '' : bucket}">${escapeHtml(status)}</span></td>` +
+        `<td><button type="button" class="pill status-pill ${bucket === 'included' ? '' : bucket}${manualClass}" data-row-key="${escapeHtml(r._key)}" title="${escapeHtml(statusTitle)}">${escapeHtml(status)}</button></td>` +
         `<td><span class="pill">${escapeHtml(r.category)}</span></td>` +
         `<td>${escapeHtml(r.charge)}</td>` +
         `<td>${escapeHtml(r.level)}</td>` +
@@ -1093,6 +1349,7 @@
     const base = result.format === 'MSC' ? 'MSC Spot Rate'
       : result.format === 'Hapag-Lloyd' ? 'Hapag-Lloyd Spot Rate'
       : result.format === 'Maersk' ? 'Maersk Spot Rate'
+      : result.format === 'OOCL' ? 'OOCL Spot Rate'
       : '';
     if (!base) return '';
     if (result.supportsAllTypes) return `${base} · 20STD / 40STD / 40HC`;
@@ -1142,15 +1399,22 @@
     const text = input.value.trim();
     if (!text) {
       currentRows = [];
+      manualBucketOverrides = {};
+      lastInputForOverrides = '';
       statusEl.className = 'status err';
       statusEl.textContent = 'Klistra in pristext.';
       renderTotals({});
       renderTable([]);
       return;
     }
+    if (text !== lastInputForOverrides) {
+      manualBucketOverrides = {};
+      lastInputForOverrides = text;
+    }
     const result = detectAndParse(text);
     lastFormat = result.format;
     currentRows = result.rows;
+    assignRowKeys(currentRows);
     if (!currentRows.length) {
       updateRateLabel(result);
       applyContainerTypeLock(result);
@@ -1168,7 +1432,7 @@
     const excluded = calc.buckets.excluded.length;
     statusEl.className = 'status ok';
     const typeNote = result.supportsAllTypes ? 'Alla containertyper.' : (result.fixedContainerType ? `Containertyp låst till ${result.fixedContainerType}.` : 'Containertyp ej låst.');
-    statusEl.textContent = `${result.format}: ${currentRows.length} rader. Ingår ${included}. Additional ${additional}. Exkluderade ${excluded}. ${typeNote}`;
+    statusEl.textContent = `${result.format}: ${currentRows.length} rader. Ingår ${included}. Additional ${additional}. Exkluderade ${excluded}. ${typeNote} Valda grupper: ${selectedGroupsLabel()}.`;
     renderTotals(calc);
     renderTable(currentRows);
   }
@@ -1227,6 +1491,8 @@
     if (input.value.trim()) recalc();
     else {
       currentRows = [];
+      manualBucketOverrides = {};
+      lastInputForOverrides = '';
       updateRateLabel();
       applyContainerTypeLock(null);
       statusEl.textContent = '';
@@ -1245,9 +1511,34 @@
       input.focus();
     }
   });
+
+  function toggleManualBucket(rowKey) {
+    if (!rowKey) return;
+    const row = currentRows.find(r => r._key === rowKey);
+    if (!row) return;
+    const currentBucket = row._bucket || rowRule(row).bucket;
+    manualBucketOverrides[rowKey] = currentBucket === 'included' ? 'excluded' : 'included';
+    recalc();
+  }
+
+  tableEl.addEventListener('click', e => {
+    const pill = e.target.closest('.status-pill[data-row-key]');
+    if (!pill) return;
+    toggleManualBucket(pill.dataset.rowKey);
+  });
+  tableEl.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const pill = e.target.closest('.status-pill[data-row-key]');
+    if (!pill) return;
+    e.preventDefault();
+    toggleManualBucket(pill.dataset.rowKey);
+  });
+
   calcBtn.addEventListener('click', recalc);
   ratesBtn.addEventListener('click', fetchRates);
-  document.querySelectorAll('input[name="mode"]').forEach(el => el.addEventListener('change', () => currentRows.length && recalc()));
+  [includeFreightEl, includeOriginEl, includeDestinationEl]
+    .filter(Boolean)
+    .forEach(el => el.addEventListener('change', () => currentRows.length && recalc()));
   containerTypeEl.addEventListener('change', () => currentRows.length && recalc());
   equipmentQtyEl.addEventListener('input', () => currentRows.length && recalc());
   blQtyEl.addEventListener('input', () => currentRows.length && recalc());
@@ -1255,6 +1546,11 @@
     input.value = '';
     currentRows = [];
     lastFormat = '';
+    manualBucketOverrides = {};
+    lastInputForOverrides = '';
+    if (includeFreightEl) includeFreightEl.checked = true;
+    if (includeOriginEl) includeOriginEl.checked = true;
+    if (includeDestinationEl) includeDestinationEl.checked = false;
     containerTypeEl.disabled = false;
     setInputReplaced(false);
     rateLabelEl.textContent = '';
