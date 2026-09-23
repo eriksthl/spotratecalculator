@@ -3,520 +3,132 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Eriks Spotkalkylator</title>
+  <title>Eriks Spotkalkylator v3.1.0</title>
   <style>
     :root {
-      --bg: #0b1020;
-      --panel: #11162a;
-      --panel-2: #0f1430;
-      --input: #0b1130;
-      --text: #e8ebff;
-      --sub: #a9b0d6;
-      --accent: #6aa6ff;
-      --ok: #66d19e;
-      --warn: #ffb86b;
-      --danger: #ff6b6b;
-      --border: #2a3560;
-      --border-soft: #222c58;
-      --table-head: #151d3a;
-      --shadow: 0 12px 35px rgba(0,0,0,0.35);
+      color-scheme: light;
+      --border: #878787;
+      --border-dark: #222;
+      --panel: #eeeeee;
+      --panel-dark: #dddddd;
+      --muted: #5f5f5f;
+      --selected: #fff8c7;
+      --total: #fffde8;
+      --danger: #9d0000;
+      --focus: #1d5f9a;
     }
-
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
-
-    html, body { min-height: 100%; }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background: radial-gradient(circle at top right, #1a2035 0%, #0b1020 44%, #070b18 100%);
-      line-height: 1.45;
-    }
-
-    header {
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 18px 20px 6px;
-    }
-
-    h1 {
-      margin: 0 0 4px;
-      font-size: 22px;
-      line-height: 1.1;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.02em;
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 15px;
-      color: #fff;
-      font-weight: 700;
-    }
-
-    h3 {
-      margin: 14px 0 8px;
-      font-size: 14px;
-      color: #fff;
-    }
-
-    p {
-      margin: 0 0 12px;
-      color: var(--sub);
-    }
-
-    main {
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 12px 20px 34px;
-      display: grid;
-      grid-template-columns: 410px minmax(0, 1fr);
-      gap: 16px;
-      align-items: start;
-    }
-
-    .card {
-      background: rgba(17, 22, 42, 0.96);
-      border: 1px solid var(--border-soft);
-      border-radius: 10px;
-      box-shadow: var(--shadow);
-      padding: 16px;
-    }
-
-    main > .card:first-child {
-      position: sticky;
-      top: 14px;
-      max-height: calc(100vh - 28px);
-      overflow-y: auto;
-      border-right: 1px solid #212a4f;
-      box-shadow: 4px 0 20px rgba(0,0,0,0.28), var(--shadow);
-    }
-
-    label {
-      display: block;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--sub);
-      margin-bottom: 5px;
-      font-weight: 700;
-    }
-
+    body { margin: 18px; background: #fff; color: #111; font: 14px/1.35 Arial, Helvetica, sans-serif; }
+    header { max-width: 1500px; margin-bottom: 12px; }
+    h1 { margin: 0; font-size: 21px; font-weight: 600; }
+    .version { margin-top: 3px; color: #777; font-size: 11px; font-weight: normal; }
+    .route-meta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(95px, .55fr); gap: 10px; padding: 10px; margin: 0 0 12px; border: 1px solid #aaa; background: #fafafa; }
+    .route-meta dt { margin-bottom: 3px; color: #5f5f5f; font-size: 11px; }
+    .route-meta dd { margin: 0; font-weight: bold; overflow-wrap: anywhere; }
+    h2 { margin: 0 0 6px; font-size: 14px; }
+    p { margin: 0; }
+    main { max-width: 1500px; display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 16px; align-items: start; }
+    main > .card { border: 1px solid var(--border); padding: 10px; background: var(--panel); }
+    .card, .field { min-width: 0; }
+    label { display: block; margin-bottom: 3px; font-size: 11px; font-weight: bold; }
     textarea, select, input {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 8px 10px;
-      background: var(--input);
-      color: var(--text);
-      font: inherit;
-      outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      width: 100%; min-height: 31px; padding: 4px 6px; border: 1px solid #777;
+      border-radius: 0; background: #fff; color: #111; font: 14px Arial, Helvetica, sans-serif;
     }
-
-    textarea:focus, select:focus, input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(106,166,255,0.15);
-    }
-
-    textarea {
-      min-height: 260px;
-      resize: vertical;
-      font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    }
-
-    textarea.is-replaced-by-label {
-      display: none;
-    }
-
+    textarea { min-height: 235px; resize: vertical; font: 12px/1.4 Consolas, Monaco, monospace; }
+    textarea.is-replaced-by-label { display: none; }
     select { cursor: pointer; }
-
-    select:disabled {
-      cursor: not-allowed;
-      opacity: 0.78;
-      filter: saturate(0.8);
-    }
-
-    input[type="number"] {
-      font-variant-numeric: tabular-nums;
-    }
-
+    select:disabled, input:disabled { background: #ddd; color: #777; }
+    input[type="number"] { font-variant-numeric: tabular-nums; }
     button {
-      font-family: inherit;
-      border-radius: 6px;
-      padding: 8px 10px;
-      font-size: 13px;
-      cursor: pointer;
-      border: 1px solid var(--accent);
-      background: var(--accent);
-      color: #061026;
-      font-weight: 700;
-      transition: filter 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+      min-height: 29px; padding: 4px 9px; border: 1px solid #777; border-radius: 0;
+      background: #eee; color: #111; font: inherit; line-height: 19px; cursor: pointer;
     }
-
-    button.secondary {
-      background: var(--input);
-      border-color: var(--border);
-      color: var(--text);
-      font-weight: 700;
-    }
-
-    button:hover { filter: brightness(1.08); }
-    button:active { transform: translateY(1px); }
-    button:disabled { opacity: 0.62; cursor: progress; }
-
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      align-items: end;
-      margin-top: 12px;
-    }
-
-    .controls > button {
-      min-height: 34px;
-    }
-
-    .field { min-width: 0; }
-    .field.small { min-width: 0; }
-
-    .mode-switch {
-      position: relative;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0;
-      padding: 4px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--input);
-      overflow: hidden;
-    }
-
-    .mode-switch label { margin: 0; }
-    .mode-switch input { position: absolute; opacity: 0; pointer-events: none; }
-
-    .mode-switch span {
-      position: relative;
-      z-index: 1;
-      display: block;
-      padding: 8px 10px;
-      border-radius: 999px;
-      text-align: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--sub);
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .mode-switch input:checked + span {
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 2px 10px rgba(106,166,255,0.25);
-      font-weight: 700;
-    }
-
-    .include-field {
-      grid-column: 1 / -1;
-    }
-
-    .include-panel {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-      padding: 4px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--input);
-    }
-
-    .include-toggle {
-      position: relative;
-      display: block;
-      margin: 0;
-    }
-
-    .include-toggle input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .include-toggle span {
-      display: block;
-      padding: 8px 10px;
-      border-radius: 6px;
-      text-align: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--sub);
-      cursor: pointer;
-      user-select: none;
-      border: 1px solid transparent;
-      transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-
-    .include-toggle input:checked + span {
-      background: var(--accent);
-      color: #fff;
-      border-color: rgba(255,255,255,0.18);
-      box-shadow: 0 2px 10px rgba(106,166,255,0.25);
-    }
-
-    .include-toggle input:focus-visible + span {
-      box-shadow: 0 0 0 3px rgba(106,166,255,0.18), 0 2px 10px rgba(106,166,255,0.25);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .span-8 { grid-column: span 8; }
-    .span-4 { grid-column: span 4; }
-
-    .totals {
-      display: grid;
-      gap: 10px;
-    }
-
-    .totalbox {
-      border: 1px solid var(--border-soft);
-      border-radius: 8px;
-      padding: 12px;
-      background: var(--panel-2);
-    }
-
-    .totalbox.main {
-      border-color: rgba(106,166,255,0.65);
-      background: rgba(106,166,255,0.09);
-      box-shadow: inset 0 0 0 1px rgba(106,166,255,0.06);
-    }
-
-    .totalbox.additional {
-      border-color: rgba(255,184,107,0.62);
-      background: rgba(255,184,107,0.10);
-    }
-
-    .totalbox.excluded {
-      border-color: rgba(255,107,107,0.52);
-      background: rgba(255,107,107,0.08);
-    }
-
-    .totalbox small {
-      color: var(--sub);
-      display: block;
-      font-size: 11px;
-    }
-
-    .totalbox strong {
-      font-size: 24px;
-      display: block;
-      margin-top: 4px;
-      color: #fff;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .note {
-      color: var(--sub);
-      font-size: 11px;
-      line-height: 1.45;
-      margin-top: 8px;
-    }
-
-    .status {
-      margin-top: 10px;
-      font-weight: 700;
-      font-size: 13px;
-    }
-
-    .status.ok { color: var(--ok); }
-    .status.err { color: var(--danger); }
-    .status.warn { color: var(--warn); }
-
-    .table-wrap {
-      overflow: auto;
-      border: 1px solid var(--border-soft);
-      border-radius: 8px;
-      background: #0b1130;
-      max-height: calc(100vh - 240px);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 1040px;
-      font-size: 13px;
-    }
-
-    th, td {
-      padding: 9px 10px;
-      border-bottom: 1px solid var(--border-soft);
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      background: var(--table-head);
-      color: #fff;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.35px;
-    }
-
-    td { color: var(--text); }
-    td.num, th.num {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    tr:last-child td { border-bottom: 0; }
-    tbody tr:hover td { background: rgba(106,166,255,0.045); }
-    tr.excluded-row td { color: #8790bc; background: rgba(255,107,107,0.045); }
-    tr.additional-row td { background: rgba(255,184,107,0.06); }
-
-    .pill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(106,166,255,0.14);
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-      border: 1px solid rgba(106,166,255,0.24);
-    }
-
-    .pill.additional {
-      background: rgba(255,184,107,0.14);
-      color: var(--warn);
-      border-color: rgba(255,184,107,0.35);
-    }
-
-    .pill.excluded {
-      background: rgba(255,107,107,0.12);
-      color: var(--danger);
-      border-color: rgba(255,107,107,0.28);
-    }
-
-    .status-pill {
-      appearance: none;
-      line-height: 1.45;
-      cursor: pointer;
-    }
-
-    .status-pill.manual {
-      border-style: dashed;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
-    }
-
-    .footer-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    .rate-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
-      gap: 8px;
-      align-items: end;
-      max-height: 260px;
-      overflow: auto;
-      padding-right: 4px;
-    }
-
-    .rate-grid label {
-      font-size: 10px;
-      margin-bottom: 4px;
-    }
-
-    details.rates-panel {
-      margin-top: 12px;
-      border: 1px solid var(--border-soft);
-      border-radius: 8px;
-      background: var(--panel-2);
-      padding: 10px;
-    }
-
-    details.rates-panel summary {
-      cursor: pointer;
-      color: var(--sub);
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      user-select: none;
-    }
-
-    .rates-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin: 10px 0;
-    }
-
-    .compact-note {
-      color: var(--sub);
-      font-size: 11px;
-      margin-top: 8px;
-    }
-
-    .rate-label {
-      display: none;
-      width: max-content;
-      max-width: 100%;
-      margin: 8px 0 12px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(106,166,255,0.45);
-      background: rgba(106,166,255,0.12);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .rate-label.is-visible { display: inline-flex; }
-
-    @media (max-width: 1100px) {
-      main {
-        grid-template-columns: 1fr;
-      }
-      main > .card:first-child {
-        position: static;
-        max-height: none;
-      }
-      .span-8, .span-4 { grid-column: 1 / -1; }
+    button:hover { background: #ddd; }
+    button:disabled { color: #777; cursor: default; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+    summary:focus-visible, .rate-label:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+    #calcBtn { font-weight: bold; border-color: #222; }
+    .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end; margin-top: 12px; }
+    .include-field, #clearBtn { grid-column: 1 / -1; }
+    .include-panel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+    .include-toggle { position: relative; margin: 0; }
+    .include-toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; min-height: 0; }
+    .include-toggle span { display: block; padding: 6px 2px; text-align: center; font-size: 12px; font-weight: normal; border: 1px solid #777; background: #fff; cursor: pointer; }
+    .include-toggle input:checked + span { background: var(--selected); border-color: #222; font-weight: bold; }
+    .include-toggle input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 1px; }
+    .grid { display: grid; gap: 16px; min-width: 0; }
+    .totals { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+    .totalbox { border: 1px solid #aaa; padding: 10px; background: #fafafa; overflow-wrap: anywhere; }
+    .totalbox.main { border: 2px solid var(--border-dark); background: var(--total); }
+    .totalbox.additional { background: #f5f5f5; }
+    .totalbox.excluded { color: #666; }
+    .totalbox small { color: var(--muted); display: block; font-size: 12px; margin-bottom: 4px; }
+    .totalbox strong { font-size: 14px; font-variant-numeric: tabular-nums; }
+    .totalbox.main strong { display: block; font-size: 25px; line-height: 1.2; margin-top: 4px; }
+    .note, .compact-note { color: var(--muted); font-size: 11px; margin-top: 6px; overflow-wrap: anywhere; }
+    .note:empty, .compact-note:empty { display: none; }
+    .status { margin-top: 10px; color: #555; font: 12px/1.35 Consolas, Monaco, monospace; }
+    .status:empty { display: none; }
+    .status.err, .compact-note.err { color: var(--danger); }
+    .status.warn { color: #875700; }
+    .table-wrap { overflow: auto; max-height: 600px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .table-wrap table { min-width: 860px; }
+    th, td { padding: 6px 8px; border: 1px solid #aaa; text-align: left; vertical-align: middle; }
+    th { background: var(--panel); font-size: 12px; white-space: nowrap; }
+    .table-wrap th { position: sticky; top: 0; z-index: 1; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    tbody tr:hover td { background: #f4f4f4; }
+    tr.excluded-row td { color: #777; background: #fafafa; }
+    tr.additional-row td { background: #f5f5f5; }
+    .pill { font-size: 11px; white-space: nowrap; }
+    .status-pill { padding: 2px 6px; min-height: 25px; line-height: 19px; background: var(--selected); }
+    .status-pill.additional { background: #eee; }
+    .status-pill.excluded { color: #666; background: #f5f5f5; }
+    .status-pill.manual { border-style: dashed; }
+    .footer-actions, .rates-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .rate-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; max-height: 240px; overflow: auto; margin-top: 8px; padding: 2px; }
+    .rate-grid label { font-size: 10px; }
+    .rate-grid input { font-size: 12px; }
+    details { border: 1px solid #aaa; background: #fafafa; }
+    summary { padding: 7px 9px; background: #eee; cursor: pointer; font-weight: bold; font-size: 12px; }
+    details.rates-panel { margin-top: 12px; }
+    .rates-panel > :not(summary) { margin-left: 8px; margin-right: 8px; }
+    .rates-panel .compact-note { margin-bottom: 8px; }
+    .rate-label { display: none; padding: 8px; border: 1px solid #777; background: var(--selected); font-size: 12px; font-weight: bold; cursor: pointer; overflow-wrap: anywhere; }
+    .rate-label.is-visible { display: block; }
+    .note-field { margin-top: 14px; }
+    #rateNote { min-height: 76px; font: 13px/1.4 Arial, Helvetica, sans-serif; }
+    .history-panel { grid-column: 1 / -1; min-width: 0; }
+    #historyCount { margin-left: 6px; font-weight: normal; color: #555; }
+    #historyStatus:not(:empty) { padding: 2px 9px 8px; }
+    .history-table-wrap { max-height: 360px; overflow: auto; }
+    .history-table { min-width: 1050px; }
+    .history-table th { position: sticky; top: 0; z-index: 1; }
+    .history-table td { background: #fff; }
+    .history-table tr.is-active td { background: var(--selected); }
+    .history-table time { white-space: nowrap; }
+    .history-note { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 350px; }
+    .history-total { white-space: pre-line; font-variant-numeric: tabular-nums; }
+    .history-table td:last-child { width: 70px; }
+    @media (max-width: 1080px) {
+      main { grid-template-columns: 1fr; }
       .table-wrap { max-height: none; }
     }
-
     @media (max-width: 640px) {
-      header { padding: 18px 14px 6px; }
-      main { padding: 10px 14px 28px; }
-      .controls { grid-template-columns: 1fr; }
-      .include-panel { grid-template-columns: 1fr; }
-      .rate-grid { grid-template-columns: 1fr 1fr; }
+      body { margin: 12px; }
       h1 { font-size: 20px; }
+      .totals { grid-template-columns: 1fr 1fr; }
+      .totalbox.main { grid-column: 1 / -1; }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Eriks Spotkalkylator (Demo)</h1>
+    <h1>Eriks Spotkalkylator</h1>
+    <div class="version">v3.1.0</div>
   </header>
 
   <main>
@@ -554,6 +166,12 @@
         <button id="clearBtn" class="secondary">Rensa</button>
       </div>
 
+      <div class="note-field">
+        <label for="rateNote">Note</label>
+        <textarea id="rateNote" rows="3"></textarea>
+        <div id="saveStatus" class="compact-note" role="status"></div>
+      </div>
+
       <details class="rates-panel">
         <summary>ROE</summary>
         <div class="rates-actions">
@@ -563,11 +181,16 @@
         <div id="rateMeta" class="compact-note"></div>
       </details>
 
-      <div id="status" class="status"></div>
+      <div id="status" class="status" role="status"></div>
     </section>
 
     <section class="grid">
       <div class="card span-4">
+        <dl id="routeMeta" class="route-meta">
+          <div><dt>POL</dt><dd id="polValue">—</dd></div>
+          <div><dt>POD</dt><dd id="podValue">—</dd></div>
+          <div><dt>Transit</dt><dd id="transitValue">—</dd></div>
+        </dl>
         <h2>Summa</h2>
         <div id="totals" class="totals"><p class="note"></p></div>
       </div>
@@ -579,6 +202,16 @@
         </div>
       </div>
     </section>
+    <details id="historyPanel" class="history-panel" open>
+      <summary>Historik <span id="historyCount">0</span></summary>
+      <div id="historyStatus" class="compact-note" role="status"></div>
+      <div class="history-table-wrap">
+        <table class="history-table">
+          <thead><tr><th>Datum / tid</th><th>Rate</th><th>POL</th><th>POD</th><th>Equipment</th><th>Antal</th><th>Transit</th><th>Huvudsumma</th><th>Note</th><th></th></tr></thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </details>
   </main>
 
 <script>
@@ -600,7 +233,24 @@
   const rateGridEl = document.getElementById('rateGrid');
   const rateMetaEl = document.getElementById('rateMeta');
   const rateLabelEl = document.getElementById('rateLabel');
+  const rateNoteEl = document.getElementById('rateNote');
+  const saveStatusEl = document.getElementById('saveStatus');
+  const historyBodyEl = document.getElementById('historyBody');
+  const historyCountEl = document.getElementById('historyCount');
+  const historyStatusEl = document.getElementById('historyStatus');
+  const polValueEl = document.getElementById('polValue');
+  const podValueEl = document.getElementById('podValue');
+  const transitValueEl = document.getElementById('transitValue');
   const rateInputs = {};
+
+  const HISTORY_KEY = 'erik.spotCalculator.history.v1';
+  let historyEntries = [];
+  let activeCheckId = null;
+  let activeCheckText = '';
+  let ratesRevision = 0;
+  let ratesController = null;
+  let currentMetadata = { pol: '', pod: '', transitDays: null };
+  const metadataCache = new Map();
 
   let currentRows = [];
   let lastFormat = '';
@@ -624,6 +274,28 @@
     PHP: 0.1800, CLP: 0.0110, COP: 0.0027, PEN: 2.8500, ARS: 0.0090
   };
 
+
+  function normalizePastedText(text) {
+    const clean = value => String(value).replace(/\[([^\]]+)\]\([^\n]*?\)/g, '$1')
+      .replace(/\*\*/g, '').replace(/^\s*#{1,6}\s+/, '').replace(/\u00a0/g, ' ').trim();
+    return String(text || '').split('\n').flatMap(raw => {
+      const pipeTable = /^\s*\|.*\|\s*$/.test(raw);
+      const line = clean(raw);
+      if (/^-{3,}$/.test(line)) return [];
+      if (!pipeTable && !line.includes('\t')) return [line.replace(/^(Freight|Origin|Destination) charges(?=Basis)/i, '$1 charges\n')];
+      const cells = (pipeTable ? raw.trim().slice(1, -1).split('|') : line.split('\t')).map(clean).filter(Boolean);
+      if (pipeTable && cells.every(cell => /^:?-+:?$/.test(cell))) return [];
+      const unit = cells.findIndex(cell => /^(Ctr\.|BL)$/.test(cell));
+      if (unit >= 0 && /^[A-Z]{3}$/.test(cells[unit + 1] || '')) {
+        return [...cells.slice(0, unit + 2), cells.slice(unit + 2).join('\t')];
+      }
+      const maerskRow = /^(Container|Bill of Lading)$/i.test(cells[1] || '');
+      const maerskHeader = /^(Freight|Origin|Destination) charges|^Basis/i.test(cells[0] || '');
+      if (maerskRow || maerskHeader) return cells.map(cell => cell.replace(/^(Freight|Origin|Destination) charges(?=Basis)/i, '$1 charges\n'));
+      // OOCL and existing Hapag price triples retain their tab-separated columns.
+      return [pipeTable ? cells.join('\t') : line];
+    }).join('\n');
+  }
 
   function cleanLines(text) {
     return String(text || '')
@@ -729,9 +401,14 @@
     return lines.slice(start, end);
   }
 
+  function isHapagTransportAdditionalOrigin(charge) {
+    return /^Transport\s+Additional\s+Orig(?:in)?\b/i.test(String(charge || '').trim());
+  }
+
   function classifyFormat2Charge(charge, collectFlag) {
     const c = String(charge || '');
     if (/^Ocean Freight$/i.test(c)) return 'Freight Charge';
+    if (isHapagTransportAdditionalOrigin(c)) return 'Freight Surcharge';
     if (/Document Charge/i.test(c) && !/Destination Documentation/i.test(c)) return 'Export Surcharge';
     if (/(Origin|Orig\.?)/i.test(c) && /Emergency Ops|THC|Terminal|Handling|Additional/i.test(c)) return 'Export Surcharge';
     if (collectFlag || /Destination|Dest\.?|Cargo Release|Equipment Transfer|Receiving,?\s*Handling,?\s*Delivery|Equipment Maintenance|Electronic Payment Processing|Preparing Delivery Order/i.test(c)) return 'Import Surcharge';
@@ -832,7 +509,8 @@
 
       rows.push({
         format: 'Hapag-Lloyd',
-        category: forceImportForThisRow ? 'Import Surcharge' : classifyFormat2Charge(charge, collectFlag),
+        category: isHapagTransportAdditionalOrigin(charge) ? 'Freight Surcharge'
+          : forceImportForThisRow ? 'Import Surcharge' : classifyFormat2Charge(charge, collectFlag),
         charge,
         level: unit,
         unit,
@@ -1026,38 +704,129 @@
 
   function detectMaerskContainerType(lines) {
     const joined = lines.join(' ').replace(/\s+/g, ' ');
-    const m = joined.match(/\b1\s*x\s*(20|40)\s*Dry\s*(High|Standard)\b/i);
+    const m = joined.match(/\b\d+\s*[x×]\s*(20|40)\s*Dry\s*(High|Standard)\b/i);
     if (!m) return '';
     if (m[1] === '40' && /High/i.test(m[2])) return '40HC';
     if (m[1] === '40') return '40STD';
     return '20STD';
   }
 
+  function selectedMscEquipment(lines) {
+    // The search header lists every available type; only a single, explicit type is a selection.
+    for (let i = lines.length - 1; i >= 0; i--) {
+      const match = lines[i].match(/^Equipment\s*type\s*:\s*(.*)$/i);
+      if (!match && !/^Equipment\s*type$/i.test(lines[i])) continue;
+      const raw = (match?.[1] || lines[i + 1] || '').replace(/["'’]/g, '').trim();
+      if (!/^(?:20|40)\s*(?:DV|STD|HC|HQ|Dry\s+Van|Dry\s+Standard|Dry\s+High|High\s+Cube)$/i.test(raw)) continue;
+      const type = normalizeContainerType(raw);
+      if (type) return { type, index: i };
+    }
+    return { type: '', index: -1 };
+  }
+
   function detectMscContainerType(lines) {
+    return selectedMscEquipment(lines).type;
+  }
+
+  function labeledValue(lines, pattern) {
     for (let i = 0; i < lines.length; i++) {
-      const sameLine = lines[i].match(/^Equipment\s*type\s*:\s*(.+)$/i);
-      if (sameLine) {
-        const type = normalizeContainerType(sameLine[1]);
-        if (type) return type;
-      }
-      if (/^Equipment\s*type\s*:?$/i.test(lines[i] || '')) {
-        const type = normalizeContainerType(lines[i + 1] || '');
-        if (type) return type;
-      }
+      const match = lines[i].match(pattern);
+      if (match) return (match[1] || lines[i + 1] || '').trim();
     }
     return '';
   }
 
+  function transitDaysFromValue(value) {
+    const text = String(value || '').trim();
+    if (/^\d+(?:[.,]\d+)?$/.test(text)) return Math.max(0, Math.ceil(Number(text.replace(',', '.')) - 0.5));
+    let minutes = 0;
+    let found = false;
+    for (const match of text.matchAll(/(\d+(?:[.,]\d+)?)\s*(days?|d\b|hours?|hrs?|h\b|minutes?|mins?|m\b)/gi)) {
+      const unit = match[2].toLowerCase();
+      minutes += Number(match[1].replace(',', '.')) * (unit.startsWith('d') ? 1440 : unit.startsWith('h') ? 60 : 1);
+      found = true;
+    }
+    return found ? Math.max(0, Math.ceil(minutes / 1440 - 0.5)) : null;
+  }
+
+  function extractTransitDays(lines) {
+    const value = labeledValue(lines, /^(?:(?:Est\.?|Estimated)\s+)?(?:Transit\s+(?:Time|Days)|Transportation\s+Days)\s*:?\s*(.*)$/i);
+    return transitDaysFromValue(value);
+  }
+
+  function hapagPort(lines, role) {
+    const pattern = role === 'pol' ? /^Terminal\s*\/\s*Ramp\s*\(PoL\)\s*:?\s*(.*)$/i : /^Terminal\s*\/\s*Ramp\s*\(PoD\)\s*:?\s*(.*)$/i;
+    for (let i = 0; i < lines.length; i++) {
+      const match = lines[i].match(pattern);
+      if (!match) continue;
+      if (match[1]) return match[1];
+      // Hapag repeats these fields with the label after the location in the footer.
+      if (/^(From|To)$/i.test(lines[i - 2] || '')) return lines[i - 1];
+      const next = lines[i + 1] || '';
+      if (next && !/^(From|To|Terminal|Estimated|Quick Quotes)\b/i.test(next)) return next;
+    }
+    return '';
+  }
+
+  function maerskPorts(lines) {
+    const start = lines.findIndex(line => /^(?:vessel-front\s*)?Route details$/i.test(line));
+    if (start < 0) return { pol: '', pod: '' };
+    const end = lines.findIndex((line, index) => index > start && /^Maersk Spot|^Breakdown$/i.test(line));
+    const route = lines.slice(start + 1, end < 0 ? undefined : end);
+    const icon = /^(?:pin|vessel-front|clock(?:-[a-z]+)?)$/i;
+    const pol = route.find(line => !icon.test(line)) || '';
+    let pod = '';
+    // The final arrival is the POD, also when the route lists intermediate calls.
+    for (let i = route.length - 1; i >= 0; i--) {
+      if (!/^Arrival$/i.test(route[i])) continue;
+      let before = i - 1;
+      while (before >= 0 && icon.test(route[before])) before--;
+      // Route location blocks list the port, then its terminal, then the arrival marker.
+      if (before >= 1) pod = route[before - 1];
+      break;
+    }
+    return { pol, pod };
+  }
+
+  function extractMetadata(lines, format, fixedContainerType = '') {
+    let ports = { pol: '', pod: '' };
+    let transitLines = lines;
+    if (format === 'MSC') {
+      const selected = selectedMscEquipment(lines);
+      if (selected.index >= 0) transitLines = lines.slice(selected.index);
+      ports.pol = labeledValue(lines, /^From\s*:\s*(.*)$/i) || labeledValue(lines, /^Port of Load(?:ing)?\s*:?\s*(.*)$/i);
+      ports.pod = labeledValue(lines, /^To\s*:\s*(.*)$/i) || labeledValue(lines, /^Port of Discharge\s*:?\s*(.*)$/i);
+    } else if (format === 'Maersk') {
+      ports = maerskPorts(lines);
+    } else if (format === 'Hapag-Lloyd') {
+      ports = { pol: hapagPort(lines, 'pol'), pod: hapagPort(lines, 'pod') };
+    }
+    return { ...ports, equipmentType: fixedContainerType, transitDays: extractTransitDays(transitLines) };
+  }
+
+  function formatTransit(days) {
+    return Number.isFinite(days) ? `${days} ${days === 1 ? 'dag' : 'dagar'}` : '—';
+  }
+
+  function renderMetadata(metadata = {}) {
+    polValueEl.textContent = metadata.pol || '—';
+    podValueEl.textContent = metadata.pod || '—';
+    transitValueEl.textContent = formatTransit(metadata.transitDays);
+  }
+
   function detectAndParse(text) {
-    const lines = cleanLines(text);
+    const lines = cleanLines(normalizePastedText(text));
     const looksOOCL = lines.some(l => /^Ocean Freight\s*:/i.test(l))
       && (lines.some(l => /\bPer\s*20ft\b/i.test(l)) || lines.some(l => /^Ocean Surcharges\s*:/i.test(l)));
     const looksMaersk = !looksOOCL && lines.some(l => /^Freight charges\b/i.test(l)) && lines.some(l => /^Origin charges\b/i.test(l)) && lines.some(l => /^Destination charges\b/i.test(l));
     const looksF2 = !looksOOCL && !looksMaersk && lines.some(l => /^Ocean Freight/i.test(l)) && lines.some(l => /\t/.test(l) || /ctr\. type irrelevant/i.test(l) || /^Show Total Price Estimate Details$/i.test(l));
-    if (looksOOCL) return { format: 'OOCL', rows: parseFormat4(lines), fixedContainerType: '', supportsAllTypes: true };
-    if (looksMaersk) return { format: 'Maersk', rows: parseFormat3(lines), fixedContainerType: detectMaerskContainerType(lines), supportsAllTypes: false };
-    if (looksF2) return { format: 'Hapag-Lloyd', rows: parseFormat2(lines), fixedContainerType: '', supportsAllTypes: true };
-    return { format: 'MSC', rows: parseFormat1(lines), fixedContainerType: detectMscContainerType(lines), supportsAllTypes: false };
+    let result;
+    if (looksOOCL) result = { format: 'OOCL', rows: parseFormat4(lines), fixedContainerType: '', supportsAllTypes: true };
+    else if (looksMaersk) result = { format: 'Maersk', rows: parseFormat3(lines), fixedContainerType: detectMaerskContainerType(lines), supportsAllTypes: false };
+    else if (looksF2) result = { format: 'Hapag-Lloyd', rows: parseFormat2(lines), fixedContainerType: '', supportsAllTypes: true };
+    else result = { format: 'MSC', rows: parseFormat1(lines), fixedContainerType: detectMscContainerType(lines), supportsAllTypes: false };
+    result.metadata = extractMetadata(lines, result.format, result.fixedContainerType);
+    return result;
   }
 
   function makeRowKey(row, index) {
@@ -1100,6 +869,7 @@
   function rowCostGroup(row) {
     const category = String(row.category || '');
     const charge = String(row.charge || '');
+    if (row.format === 'Hapag-Lloyd' && isHapagTransportAdditionalOrigin(charge)) return 'freight';
     if (/^Additional$/i.test(category)) return 'additional';
     if (/\bDestination\b|\bDest\.?\b|Last\s+Discharge/i.test(charge)) return 'destination';
     if (/\bOrigin\b|\bOrig\.?\b/i.test(charge)) return 'origin';
@@ -1161,7 +931,7 @@
     return out;
   }
 
-  function renderRateInputs(rates) {
+  function renderRateInputs(rates, preservePrecision = false) {
     rateGridEl.innerHTML = '';
     Object.keys(rateInputs).forEach(k => delete rateInputs[k]);
     isoCurrencies.forEach(cur => {
@@ -1174,8 +944,14 @@
       inputEl.type = 'number';
       inputEl.step = '0.0001';
       const decimals = ['IDR','VND','COP'].includes(cur) ? 6 : 4;
-      inputEl.value = Number(rates[cur] || defaultRatesToSek[cur] || 0).toFixed(decimals);
-      inputEl.addEventListener('input', () => currentRows.length && recalc());
+      const rate = Number(rates[cur] ?? defaultRatesToSek[cur] ?? 0);
+      inputEl.value = preservePrecision && rate !== Number(rate.toFixed(decimals))
+        ? String(rate) : rate.toFixed(decimals);
+      inputEl.addEventListener('input', () => {
+        ratesRevision++;
+        rateMetaEl.textContent = 'Manuellt justerad ROE';
+        if (currentRows.length) recalc();
+      });
       wrap.appendChild(label);
       wrap.appendChild(inputEl);
       rateGridEl.appendChild(wrap);
@@ -1395,9 +1171,149 @@
     setInputReplaced(Boolean(label));
   }
 
-  function recalc() {
+  function readHistoryEntries() {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    const saved = JSON.parse(raw);
+    if (saved.version !== 1 || !Array.isArray(saved.entries) || !saved.entries.every(entry =>
+      entry && typeof entry.id === 'string' && typeof entry.text === 'string' &&
+      typeof entry.note === 'string' && Number.isFinite(Date.parse(entry.createdAt)) &&
+      entry.settings && ['20STD', '40STD', '40HC', 'ALL'].includes(entry.settings.containerType) &&
+      entry.rates && entry.overrides && typeof entry.summary === 'string'
+    )) throw new Error('Invalid history');
+    return saved.entries;
+  }
+
+  function historyError(message) {
+    historyStatusEl.className = 'compact-note err';
+    historyStatusEl.textContent = message;
+    saveStatusEl.className = 'compact-note err';
+    saveStatusEl.textContent = 'Ej sparad lokalt';
+  }
+
+  function formatCheckDate(value) {
+    return new Date(value).toLocaleString('sv-SE', {
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+  }
+
+  function renderHistory() {
+    historyCountEl.textContent = String(historyEntries.length);
+    historyBodyEl.innerHTML = historyEntries.length ? [...historyEntries]
+      .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+      .map(entry => {
+        if (!metadataCache.has(entry.text)) metadataCache.set(entry.text, detectAndParse(entry.text).metadata);
+        const metadata = metadataCache.get(entry.text);
+        return `<tr${entry.id === activeCheckId ? ' class="is-active"' : ''}>
+        <td><time datetime="${escapeHtml(entry.createdAt)}">${escapeHtml(formatCheckDate(entry.createdAt))}</time></td>
+        <td>${escapeHtml(entry.format)}</td>
+        <td data-column="pol">${escapeHtml(metadata.pol || '—')}</td>
+        <td data-column="pod">${escapeHtml(metadata.pod || '—')}</td>
+        <td data-column="equipment">${escapeHtml(metadata.equipmentType || entry.settings.containerType)}</td>
+        <td class="num">${escapeHtml(entry.settings.equipmentQty)}</td>
+        <td data-column="transit">${escapeHtml(formatTransit(metadata.transitDays))}</td>
+        <td class="history-total">${escapeHtml(entry.summary)}</td>
+        <td class="history-note">${escapeHtml(entry.note)}</td>
+        <td><button type="button" data-open-check="${escapeHtml(entry.id)}">Öppna</button></td>
+      </tr>`;
+      }).join('') : '<tr><td colspan="10">Inga sparade checkar.</td></tr>';
+  }
+
+  function loadHistory() {
+    try {
+      historyEntries = readHistoryEntries();
+      historyStatusEl.textContent = '';
+    } catch (e) {
+      historyError('Historiken kunde inte läsas. Befintlig historik skrivs inte över.');
+    }
+    renderHistory();
+  }
+
+  function saveCurrentCheck() {
+    if (!currentRows.length || !input.value.trim() || input.value.trim() !== activeCheckText) return;
+    try {
+      // Merge with the latest storage so checks from another tab are retained.
+      const entries = readHistoryEntries();
+      const previous = entries.find(entry => entry.id === activeCheckId);
+      const calc = calculateBuckets(currentRows);
+      const summary = containerTypeEl.value === 'ALL'
+        ? ['20STD', '40STD', '40HC'].map(type => `${type}: ${money(calc.mainAll[type].totalInTarget)} ${calc.mainAll[type].target}`).join('\n')
+        : `${money(calc.main.totalInTarget)} ${calc.main.target}`;
+      const entry = {
+        id: activeCheckId || (globalThis.crypto?.randomUUID?.() || `check-${Date.now()}-${Math.random().toString(36).slice(2)}`),
+        createdAt: previous?.createdAt || new Date().toISOString(),
+        appVersion: '3.1.0',
+        text: input.value,
+        note: rateNoteEl.value,
+        format: lastFormat,
+        metadata: { ...currentMetadata },
+        settings: {
+          containerType: containerTypeEl.value,
+          equipmentQty: equipmentQtyEl.value,
+          blQty: blQtyEl.value,
+          ...includeSettings()
+        },
+        rates: getRatesToSek(),
+        rateMeta: rateMetaEl.textContent,
+        overrides: { ...manualBucketOverrides },
+        summary
+      };
+      const index = entries.findIndex(item => item.id === entry.id);
+      if (index < 0) entries.unshift(entry);
+      else entries[index] = entry;
+      localStorage.setItem(HISTORY_KEY, JSON.stringify({ version: 1, entries }));
+      activeCheckId = entry.id;
+      historyEntries = entries;
+      saveStatusEl.className = 'compact-note';
+      saveStatusEl.textContent = `Sparad lokalt · ${formatCheckDate(entry.createdAt)}`;
+      historyStatusEl.textContent = '';
+      renderHistory();
+    } catch (e) {
+      historyError('Checken kunde inte sparas lokalt. Lagringen kan vara full, blockerad eller innehålla oläsbar historik.');
+    }
+  }
+
+  function openHistoryCheck(id) {
+    const entry = historyEntries.find(item => item.id === id);
+    if (!entry) return;
+    // Show saved rates while fetching today's rates for this reopened check.
+    ratesRevision++;
+    activeCheckId = entry.id;
+    activeCheckText = entry.text.trim();
+    input.value = entry.text;
+    rateNoteEl.value = entry.note;
+    containerTypeEl.value = entry.settings.containerType;
+    equipmentQtyEl.value = entry.settings.equipmentQty;
+    blQtyEl.value = entry.settings.blQty;
+    includeFreightEl.checked = entry.settings.freight;
+    includeOriginEl.checked = entry.settings.origin;
+    includeDestinationEl.checked = entry.settings.destination;
+    manualBucketOverrides = { ...entry.overrides };
+    lastInputForOverrides = activeCheckText;
+    renderRateInputs(entry.rates, true);
+    rateMetaEl.textContent = entry.rateMeta || '';
+    recalc({ save: false });
+    saveStatusEl.className = 'compact-note';
+    saveStatusEl.textContent = `Sparad lokalt · ${formatCheckDate(entry.createdAt)}`;
+    renderHistory();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    fetchRates();
+  }
+
+  function syncCheckText(text) {
+    if (text === activeCheckText) return;
+    if (activeCheckText) rateNoteEl.value = '';
+    activeCheckId = null;
+    activeCheckText = text;
+    saveStatusEl.textContent = '';
+  }
+
+  function recalc(options = {}) {
     const text = input.value.trim();
+    syncCheckText(text);
     if (!text) {
+      currentMetadata = { pol: '', pod: '', transitDays: null };
+      renderMetadata(currentMetadata);
       currentRows = [];
       manualBucketOverrides = {};
       lastInputForOverrides = '';
@@ -1412,6 +1328,8 @@
       lastInputForOverrides = text;
     }
     const result = detectAndParse(text);
+    currentMetadata = result.metadata;
+    renderMetadata(currentMetadata);
     lastFormat = result.format;
     currentRows = result.rows;
     assignRowKeys(currentRows);
@@ -1435,16 +1353,23 @@
     statusEl.textContent = `${result.format}: ${currentRows.length} rader. Ingår ${included}. Additional ${additional}. Exkluderade ${excluded}. ${typeNote} Valda grupper: ${selectedGroupsLabel()}.`;
     renderTotals(calc);
     renderTable(currentRows);
+    if (options.save !== false) saveCurrentCheck();
   }
 
   async function fetchRates() {
+    const requestRevision = ++ratesRevision;
+    if (ratesController) ratesController.abort();
+    const controller = new AbortController();
+    ratesController = controller;
+    const timeout = setTimeout(() => controller.abort(), 15000);
     ratesBtn.disabled = true;
-    const oldText = ratesBtn.textContent;
     ratesBtn.textContent = 'Hämtar...';
+    rateMetaEl.textContent = 'Hämtar aktuell ROE...';
     try {
-      const res = await fetch('https://open.er-api.com/v6/latest/SEK', { cache: 'no-store' });
+      const res = await fetch('https://open.er-api.com/v6/latest/SEK', { cache: 'no-store', signal: controller.signal });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
+      if (requestRevision !== ratesRevision) return;
       if (!data || !data.rates) throw new Error('Felaktigt svar');
       const sekPer = { SEK: 1 };
       isoCurrencies.forEach(cur => {
@@ -1457,13 +1382,17 @@
       statusEl.textContent = 'ROE hämtad';
       if (currentRows.length) recalc();
     } catch (e) {
-      renderRateInputs(defaultRatesToSek);
-      rateMetaEl.textContent = '';
+      if (requestRevision !== ratesRevision) return;
       statusEl.className = 'status warn';
-      statusEl.textContent = 'ROE ej hämtad';
+      statusEl.textContent = 'ROE ej hämtad. Befintliga kurser behålls.';
+      rateMetaEl.textContent = 'ROE ej uppdaterad. Befintliga kurser används.';
     } finally {
-      ratesBtn.disabled = false;
-      ratesBtn.textContent = oldText;
+      clearTimeout(timeout);
+      if (ratesController === controller) {
+        ratesController = null;
+        ratesBtn.disabled = false;
+        ratesBtn.textContent = 'Hämta ROE';
+      }
     }
   }
 
@@ -1488,8 +1417,11 @@
   }
 
   input.addEventListener('input', () => {
+    syncCheckText(input.value.trim());
     if (input.value.trim()) recalc();
     else {
+      currentMetadata = { pol: '', pod: '', transitDays: null };
+      renderMetadata(currentMetadata);
       currentRows = [];
       manualBucketOverrides = {};
       lastInputForOverrides = '';
@@ -1498,6 +1430,7 @@
       statusEl.textContent = '';
       renderTotals({});
       renderTable([]);
+      renderHistory();
     }
   });
   rateLabelEl.addEventListener('click', () => {
@@ -1535,6 +1468,14 @@
   });
 
   calcBtn.addEventListener('click', recalc);
+  rateNoteEl.addEventListener('input', saveCurrentCheck);
+  historyBodyEl.addEventListener('click', e => {
+    const button = e.target.closest('button[data-open-check]');
+    if (button) openHistoryCheck(button.dataset.openCheck);
+  });
+  window.addEventListener('storage', e => {
+    if (e.key === HISTORY_KEY) loadHistory();
+  });
   ratesBtn.addEventListener('click', fetchRates);
   [includeFreightEl, includeOriginEl, includeDestinationEl]
     .filter(Boolean)
@@ -1543,6 +1484,12 @@
   equipmentQtyEl.addEventListener('input', () => currentRows.length && recalc());
   blQtyEl.addEventListener('input', () => currentRows.length && recalc());
   clearBtn.addEventListener('click', () => {
+    currentMetadata = { pol: '', pod: '', transitDays: null };
+    renderMetadata(currentMetadata);
+    activeCheckId = null;
+    activeCheckText = '';
+    rateNoteEl.value = '';
+    saveStatusEl.textContent = '';
     input.value = '';
     currentRows = [];
     lastFormat = '';
@@ -1558,6 +1505,7 @@
     statusEl.textContent = '';
     renderTotals({});
     renderTable([]);
+    renderHistory();
   });
   copyCsvBtn.addEventListener('click', async () => {
     if (!currentRows.length) { recalc(); if (!currentRows.length) return; }
@@ -1573,6 +1521,8 @@
   });
 
   renderRateInputs(defaultRatesToSek);
+  rateMetaEl.textContent = 'Förinställd ROE';
+  loadHistory();
   fetchRates();
 })();
 </script>
